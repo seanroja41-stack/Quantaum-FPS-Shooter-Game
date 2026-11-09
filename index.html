@@ -1,32 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantaum: Tactical Assault</title>
-
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no">
+    <title>Quantaum: Tactical Assault</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <div id="hud">
-    <h3>QUANTAUM: TACTICAL ASSAULT</h3>
-    <div id="health">Health: 100</div>
-    <div id="score">Enemies: 0</div>
-  </div>
+<div id="game">
+    <div id="hud">
+        <div>HEALTH: <span id="health">100</span></div>
+        <div>KILLS: <span id="kills">0</span></div>
+        <div>AMMO: ∞</div>
+    </div>
 
-  <div id="stick">
-    <div id="knob"></div>
-  </div>
+    <div id="crosshair">+</div>
 
-  <div id="controls">
-    <button id="shoot">FIRE</button>
-    <button id="jump">JUMP</button>
-  </div>
+    <div id="message">QUANTAUM: TACTICAL ASSAULT</div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div id="joystick">
+        <div id="knob"></div>
+    </div>
+
+    <div id="buttons">
+        <button id="fire">FIRE</button>
+        <button id="jump">JUMP</button>
+        <button id="run">RUN</button>
+    </div>
+
+    <div id="rotateMessage">
+        <h2>ROTATE YOUR PHONE</h2>
+        <p>Play in landscape mode</p>
+    </div>
+
+    <div id="error"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="script.js"></script>
 
 </body>
