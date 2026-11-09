@@ -1,120 +1,263 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
-scene.fog = new THREE.Fog(0x87ceeb, 20, 100);
+scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
-const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0, 2, 8);
+const camera = new THREE.PerspectiveCamera(
+  80, innerWidth / innerHeight, 0.1, 300
+);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+  antialias: true
+});
+
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 document.body.appendChild(renderer.domElement);
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2));
+
 const sun = new THREE.DirectionalLight(0xffffff, 2);
 sun.position.set(10, 20, 10);
 scene.add(sun);
 
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),
-  new THREE.MeshStandardMaterial({ color: 0x555555 }));
-floor.rotation.x = -Math.PI / 2;
-scene.add(floor);
+// Ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 200),
+  new THREE.MeshStandardMaterial({ color: 0x556644 })
+);
 
-// Simple distant buildings
-for (let i = 0; i < 20; i++) {
-  const h = 5 + Math.random() * 10;
-  const building = new THREE.Mesh(new THREE.BoxGeometry(5, h, 5),
-    new THREE.MeshStandardMaterial({ color: 0x777777 }));
-  building.position.set(Math.random() * 60 - 30, h / 2, -Math.random() * 60 - 10);
-  scene.add(building);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+
+// Player
+const player = new THREE.Group();
+scene.add(player);
+
+const body = new THREE.Mesh(
+  new THREE.BoxGeometry(0.8, 1.3, 0.5),
+  new THREE.MeshStandardMaterial({ color: 0x2244aa })
+);
+
+body.position.y = 1.3;
+player.add(body);
+
+const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.35, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0xd8a477 })
+);
+
+head.position.y = 2.2;
+player.add(head);
+
+// Weapon
+const gun = new THREE.Mesh(
+  new THREE.BoxGeometry(0.18, 0.18, 1),
+  new THREE.MeshStandardMaterial({ color: 0x222222 })
+);
+
+gun.position.set(0.5, 1.5, -0.6);
+player.add(gun);
+
+// Enemies
+const enemies = [];
+
+function spawnEnemy(x, z) {
+  const enemy = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 2, 1),
+    new THREE.MeshStandardMaterial({ color: 0xcc2222 })
+  );
+
+  enemy.position.set(x, 1, z);
+  scene.add(enemy);
+  enemies.push(enemy);
 }
 
-const targets = [];
-function createTarget() {
-  const target = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5),
-    new THREE.MeshStandardMaterial({ color: 0xff2222 }));
-  target.position.set(Math.random() * 20 - 10, 2, -Math.random() * 30 - 10);
-  scene.add(target);
-  targets.push(target);
+for (let i = 0; i < 8; i++) {
+  spawnEnemy(
+    Math.random() * 30 - 15,
+    -10 - Math.random() * 30
+  );
 }
-for (let i = 0; i < 8; i++) createTarget();
 
-const raycaster = new THREE.Raycaster();
-const scoreText = document.getElementById("score");
-const message = document.getElementById("message");
-let score = 0, gameStarted = false, yaw = 0, pitch = 0;
+// Controls
+let moveX = 0;
+let moveY = 0;
+let yaw = 0;
+let score = 0;
+let jumping = false;
+let velocityY = 0;
+let playerY = 0;
 
-function shoot() {
-  if (!gameStarted) return;
-  raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-  const hits = raycaster.intersectObjects(targets);
-  if (hits.length) {
-    const target = hits[0].object;
-    scene.remove(target);
-    targets.splice(targets.indexOf(target), 1);
+const stick = document.getElementById("stick");
+const knob = document.getElementById("knob");
+
+stick.addEventListener("pointerdown", e => {
+  stick.setPointerCapture(e.pointerId);
+  moveJoystick(e);
+});
+
+stick.addEventListener("pointermove", e => {
+  if (stick.hasPointerCapture(e.pointerId)) {
+    moveJoystick(e);
+  }
+});
+
+function moveJoystick(e) {
+  const rect = stick.getBoundingClientRect();
+
+  let x = e.clientX - rect.left - 55;
+  let y = e.clientY - rect.top - 55;
+
+  const length = Math.hypot(x, y);
+
+  if (length > 40) {
+    x *= 40 / length;
+    y *= 40 / length;
+  }
+
+  knob.style.left = 32 + x + "px";
+  knob.style.top = 32 + y + "px";
+
+  moveX = x / 40;
+  moveY = y / 40;
+}
+
+function resetJoystick() {
+  moveX = 0;
+  moveY = 0;
+
+  knob.style.left = "32px";
+  knob.style.top = "32px";
+}
+
+stick.addEventListener("pointerup", resetJoystick);
+stick.addEventListener("pointercancel", resetJoystick);
+
+// Jump
+document.getElementById("jump").onclick = () => {
+  if (!jumping) {
+    jumping = true;
+    velocityY = 0.18;
+  }
+};
+
+// Shooting
+document.getElementById("shoot").onclick = () => {
+  const origin = player.position.clone();
+  origin.y += 1.5;
+
+  const direction = new THREE.Vector3(
+    -Math.sin(yaw), 0, -Math.cos(yaw)
+  );
+
+  let closest = null;
+  let distance = 100;
+
+  for (const enemy of enemies) {
+    const toEnemy = enemy.position.clone().sub(origin);
+    const along = toEnemy.dot(direction);
+
+    if (along > 0) {
+      const side = toEnemy.clone()
+        .sub(direction.clone().multiplyScalar(along))
+        .length();
+
+      if (side < 1.5 && along < distance) {
+        closest = enemy;
+        distance = along;
+      }
+    }
+  }
+
+  if (closest) {
+    scene.remove(closest);
+    enemies.splice(enemies.indexOf(closest), 1);
+
     score++;
-    scoreText.textContent = score;
-    createTarget();
-    message.textContent = "TARGET HIT!";
-  } else {
-    message.textContent = "MISSED!";
+
+    document.getElementById("score").textContent =
+      "Enemies: " + score;
+
+    spawnEnemy(
+      Math.random() * 40 - 20,
+      -20 - Math.random() * 20
+    );
   }
-}
-document.getElementById("shootBtn").addEventListener("click", shoot);
+};
 
-document.getElementById("startBtn").addEventListener("click", () => {
-  gameStarted = true;
-  document.getElementById("startBtn").style.display = "none";
-  message.textContent = "Shoot the red targets!";
-});
-
-renderer.domElement.addEventListener("click", () => {
-  if (gameStarted && innerWidth >= 800) renderer.domElement.requestPointerLock?.();
-});
-document.addEventListener("mousemove", e => {
-  if (document.pointerLockElement === renderer.domElement) {
-    yaw -= e.movementX * 0.002;
-    pitch -= e.movementY * 0.002;
-    pitch = Math.max(-1.4, Math.min(1.4, pitch));
-  }
-});
-
-let touchX = 0, touchY = 0;
-renderer.domElement.addEventListener("touchstart", e => {
-  touchX = e.touches[0].clientX; touchY = e.touches[0].clientY;
-}, { passive:true });
-renderer.domElement.addEventListener("touchmove", e => {
-  const x = e.touches[0].clientX, y = e.touches[0].clientY;
-  yaw -= (x - touchX) * 0.005;
-  pitch -= (y - touchY) * 0.005;
-  pitch = Math.max(-1.4, Math.min(1.4, pitch));
-  touchX = x; touchY = y;
-}, { passive:true });
-
+// Keyboard
 const keys = {};
-document.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
-document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
 
+addEventListener("keydown", e => {
+  keys[e.key.toLowerCase()] = true;
+});
+
+addEventListener("keyup", e => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+// Game loop
 function animate() {
   requestAnimationFrame(animate);
-  camera.rotation.order = "YXZ";
-  camera.rotation.y = yaw;
-  camera.rotation.x = pitch;
-  if (gameStarted) {
-    if (keys.w) camera.translateZ(-0.15);
-    if (keys.s) camera.translateZ(0.15);
-    if (keys.a) camera.translateX(-0.15);
-    if (keys.d) camera.translateX(0.15);
-    camera.position.y = 2;
+
+  let forward = moveY;
+  let side = moveX;
+
+  if (keys["w"]) forward = -1;
+  if (keys["s"]) forward = 1;
+  if (keys["a"]) side = -1;
+  if (keys["d"]) side = 1;
+
+  player.position.x +=
+    (Math.cos(yaw) * side - Math.sin(yaw) * forward) * 0.12;
+
+  player.position.z +=
+    (Math.sin(yaw) * side + Math.cos(yaw) * forward) * 0.12;
+
+  if (keys["arrowleft"]) yaw += 0.03;
+  if (keys["arrowright"]) yaw -= 0.03;
+
+  player.rotation.y = yaw;
+
+  if (jumping) {
+    playerY += velocityY;
+    velocityY -= 0.009;
+
+    if (playerY <= 0) {
+      playerY = 0;
+      jumping = false;
+    }
   }
+
+  player.position.y = playerY;
+
+  // Third-person camera
+  const target = new THREE.Vector3(
+    player.position.x + Math.sin(yaw) * 5,
+    player.position.y + 4,
+    player.position.z + Math.cos(yaw) * 5
+  );
+
+  camera.position.lerp(target, 0.1);
+
+  camera.lookAt(
+    player.position.x,
+    player.position.y + 1.5,
+    player.position.z
+  );
+
   renderer.render(scene, camera);
 }
+
 animate();
 
-window.addEventListener("resize", () => {
+addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
+  
