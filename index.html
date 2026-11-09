@@ -1,21 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantaum FPS</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantaum: Tactical Assault</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div id="hud">
-  <h2>QUANTAUM FPS</h2>
-  <p>Score: <span id="score">0</span></p>
-  <div id="crosshair">+</div>
-  <button id="shootBtn">SHOOT</button>
-  <button id="startBtn">START GAME</button>
-  <p id="message">Tap START GAME</p>
-  <p id="controls">Desktop: WASD + mouse | Mobile: drag to look + Shoot</p>
-</div>
-<script type="module" src="script.js"></script>
+
+  <div id="hud">
+    <h3>QUANTAUM: TACTICAL ASSAULT</h3>
+    <div id="health">Health: 100</div>
+    <div id="score">Enemies: 0</div>
+  </div>
+
+  <div id="stick">
+    <div id="knob"></div>
+  </div>
+
+  <div id="controls">
+    <button id="shoot">FIRE</button>
+    <button id="jump">JUMP</button>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
 </body>
 </html>
