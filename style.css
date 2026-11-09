@@ -1,105 +1,156 @@
-
 * {
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: white;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #080d12;
+    font-family: Arial, sans-serif;
+    touch-action: none;
 }
 
-body {
-  position: fixed;
-  inset: 0;
+#game {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
 }
 
 #hud {
-  position: absolute;
-  top: 10px;
-  left: 15px;
-  z-index: 5;
-  text-shadow: 2px 2px black;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 5;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    line-height: 25px;
+    text-shadow: 1px 2px 3px black;
+    pointer-events: none;
 }
 
-#hud h3 {
-  font-size: 14px;
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    text-shadow: 0 0 5px black;
+    pointer-events: none;
 }
 
-#controls {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  gap: 15px;
-  z-index: 5;
+#message {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1px 2px 3px black;
+    pointer-events: none;
 }
 
-button {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  background: #222d;
-  color: white;
-  border: 2px solid white;
-  font-size: 16px;
-  font-weight: bold;
-  touch-action: manipulation;
-}
-
-#stick {
-  position: absolute;
-  bottom: 25px;
-  left: 25px;
-  width: 110px;
-  height: 110px;
-  background: #ffffff33;
-  border: 2px solid #ffffff55;
-  border-radius: 50%;
-  z-index: 5;
-  touch-action: none;
+#joystick {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    width: 115px;
+    height: 115px;
+    border: 3px solid #ffffff80;
+    background: #ffffff22;
+    border-radius: 50%;
+    z-index: 10;
+    touch-action: none;
 }
 
 #knob {
-  position: absolute;
-  width: 45px;
-  height: 45px;
-  background: #ddd;
-  border-radius: 50%;
-  left: 32px;
-  top: 32px;
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    left: 32px;
+    top: 32px;
+    border-radius: 50%;
+    background: #ffffffbb;
+    border: 2px solid white;
+    pointer-events: none;
 }
 
-#shoot {
-  background: #b51f1fbb;
+#buttons {
+    position: absolute;
+    right: 20px;
+    bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
 }
 
-#jump {
-  background: #222eaa99;
+button {
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    background: #222d35cc;
+    width: 65px;
+    height: 65px;
+    font-size: 12px;
+    touch-action: none;
+}
+
+#fire {
+    width: 78px;
+    height: 78px;
+    background: #b32626dd;
+}
+
+button:active {
+    background: #e0a02b;
+}
+
+#rotateMessage {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: #101820;
+    color: white;
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+#error {
+    position: absolute;
+    top: 40%;
+    left: 5%;
+    width: 90%;
+    color: white;
+    background: #990000dd;
+    padding: 15px;
+    display: none;
+    z-index: 100;
+    overflow-wrap: anywhere;
 }
 
 @media (orientation: portrait) {
-  body::after {
-    content: "Rotate your phone to landscape";
-    position: absolute;
-    inset: 0;
-    background: #111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    font-size: 20px;
-    text-align: center;
-  }
+    #rotateMessage {
+        display: flex;
     }
+  }
