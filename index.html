@@ -1,46 +1,131 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0,
-          maximum-scale=1.0, user-scalable=no">
-    <title>Quantaum: Tactical Assault</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <title>Quantaum Tactical FPS</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="game">
+  <div id="game">
+
+    <div id="loading">
+      <div class="loader"></div>
+      <b>QUANTAUM TACTICAL</b>
+      <small>Preparing battlefield...</small>
+    </div>
+
     <div id="hud">
-        <div>HEALTH: <span id="health">100</span></div>
-        <div>KILLS: <span id="kills">0</span></div>
-        <div>AMMO: ∞</div>
+
+      <div class="topbar">
+        <span class="team blue">BLUE TEAM</span>
+        <span id="score">0 : 0</span>
+        <span class="team red">RED TEAM</span>
+      </div>
+
+      <div class="mission">
+        ELIMINATE HOSTILES
+        <span id="remaining">5 ENEMIES</span>
+      </div>
+
+      <div id="crosshair">
+        <i></i><i></i><i></i><i></i>
+      </div>
+
+      <div id="hitmarker">✕</div>
+
+      <div class="bottom-left">
+        <div class="healthline">
+          <span>HEALTH</span>
+          <b id="health">100</b>
+        </div>
+        <div class="healthbar">
+          <i id="healthfill"></i>
+        </div>
+      </div>
+
+      <div class="weapon-info">
+        <b>ASSAULT RIFLE</b>
+        <strong id="ammo">30 <small>/ ∞</small></strong>
+        <span id="status">READY</span>
+      </div>
+
+      <div id="message"></div>
+
     </div>
 
-    <div id="crosshair">+</div>
+    <div id="controls">
 
-    <div id="message">QUANTAUM: TACTICAL ASSAULT</div>
+      <div id="stick-area">
+        <div id="stick"></div>
+      </div>
 
-    <div id="joystick">
-        <div id="knob"></div>
+      <div class="right-controls">
+
+        <button id="jump" class="ctrl">
+          JUMP
+        </button>
+
+        <button id="reload" class="ctrl">
+          ↻
+        </button>
+
+        <button id="fire" class="ctrl fire">
+          FIRE
+        </button>
+
+      </div>
+
     </div>
 
-    <div id="buttons">
-        <button id="fire">FIRE</button>
-        <button id="jump">JUMP</button>
-        <button id="run">RUN</button>
+    <div id="start-screen">
+
+      <div class="brand">
+        QUANTAUM <span>TACTICAL</span>
+      </div>
+
+      <h1>MISSION: DUST STRIKE</h1>
+
+      <p>Eliminate all hostile soldiers. Stay alert.</p>
+
+      <div class="brief">
+        <span>MODE</span>
+        <b>OFFLINE • BOT MATCH</b>
+
+        <span>MAP</span>
+        <b>DESERT OUTPOST</b>
+
+        <span>WEAPON</span>
+        <b>ASSAULT RIFLE</b>
+      </div>
+
+      <button id="start">DEPLOY</button>
+
+      <small>
+        Mobile: left joystick to move •
+        drag right side to look
+      </small>
+
     </div>
 
-    <div id="rotateMessage">
-        <h2>ROTATE YOUR PHONE</h2>
-        <p>Play in landscape mode</p>
+    <div id="end-screen" class="hidden">
+
+      <h1 id="end-title">MISSION COMPLETE</h1>
+
+      <p id="end-text"></p>
+
+      <button id="again">PLAY AGAIN</button>
+
     </div>
 
-    <div id="error"></div>
-</div>
+  </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="script.js"></script>
+  <script type="module" src="game.js"></script>
 
 </body>
 </html>
